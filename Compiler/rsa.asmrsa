@@ -1,0 +1,14 @@
+addi r1 Zero 569
+addi r2 Zero 3953
+addi r3 Zero 204800
+addi r4 Zero 307200
+addi r5 Zero 0
+
+Lb V1 R5 0
+Lb V2 R5 1
+Cnb R8 V1 V2
+Addi V1 Zero 1
+Addi V2 Zero 2
+Addi R9 Zero 1
+And R6 R1 V1
+Addi V1 V1 1

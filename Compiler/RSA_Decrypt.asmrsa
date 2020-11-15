@@ -1,0 +1,44 @@
+Addi R1 Zero 569
+Addi R2 Zero 3953
+Addi R3 Zero 204800
+Addi R4 Zero 307200
+Addi R5 Zero 0
+
+Main:
+Lb V1 R5 0
+Lb V2 R5 1
+Cnb R8 V1 V2
+Addi V1 Zero 1 // Para la potencia
+Addi V2 Zero 2 // Constante 2 para la potencia
+Addi R9 Zero 1 // Resultado
+And R6 R1 V1 // Obtenemos el bit menos significativo
+Bgt R6 Zero First_Value // Si el bit menos sig es 1 entonces cargamos el primer valor si no continua
+Addi V1 V1 1 // Acá iniciamos la potencia en 2
+
+Loop_Exponenciation:
+And R6 R1 V1 // Bit actual
+Mul R8 R8 R8 // Elevar al cuadrado el valor anterior
+Mod R8 R8 R2 // Valor^2 % 3953
+Mul V1 V1 V2 // Vamos aumentando el valor en una potencia de 2
+Bgt R6 Zero Save_value
+Bgt R1 V1 Loop_Exponenciation
+
+Post_Result:
+Sb R9 R3 0
+Addi R3 R3 1
+Addi R5 R5 2
+Bgt R4 R3 Main
+Beq Zero Zero End
+
+First_Value:
+Mul R9 R9 R8 // Si el bit menos sig es 1 entonces se carga acá
+Addi V1 V1 1 // Acá iniciamos la potencia en 2
+Beq Zero Zero Loop_Exponenciation // E iniciamos el loop
+
+Save_value:
+Mul R9 R9 R8 // Result = Result * Valor_Anterior
+Mod R9 R9 R2 // Result = Result % 3953
+Beq Zero Zero Loop_Exponenciation // E iniciamos el loop
+
+End:
+Addi S1 Zero 1

@@ -1,0 +1,20 @@
+addi r2 zero 300
+addi r3 zero 15
+addi r4 zero 10
+start:
+    mod r3 r2 r1
+    add r3 r2 r1
+    and r5 r3 r4
+    sub r6 r2 r1
+
+    mul r1 r1 r2
+    cnb r3 r3 r4
+    beq zero r2 exit
+    bgt r2 zero imm
+imm:
+    addi r7 zero 100
+    srl r7 r7 2
+    sll r8 r7 3
+exit:
+    sb r8 zero 12
+    lb r9 zero 12

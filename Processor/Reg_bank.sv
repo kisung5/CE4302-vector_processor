@@ -36,4 +36,4 @@ assign rd1 = (ra1 > 4'b1011)?/*(ra1 == 4'b1111) ? r_vga :*/rv[ra1-4'b1100] : {96
 
 assign rd2 = (ra2 > 4'b1011)?/*(ra2 == 4'b1111) ? r_vga :*/rv[ra2-4'b1100] : {96'b0, rf[ra2]};
 
-endmodule 
+endmodule

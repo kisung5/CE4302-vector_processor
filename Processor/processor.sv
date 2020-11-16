@@ -1,14 +1,14 @@
 // Porcessor module, contains basic "sweets" for a pipelined cpu.
 // Instruction memory and data memory are outside of this module.
-module processor
+module processor #(parameter N = 32, V = 128)
 (input logic clk, rst,
-input [31:0] inst, // instruction input from inst memory
+input [N-1:0] inst, // instruction input from inst memory
 input_data, // data input from data memory
 output logic memw_m, // memory write enable output control
-output [31:0] pcf, // pc address output to inst memory
+output [N-1:0] pcf, // pc address output to inst memory
 m_address, // memory address output to data memory
-m_data, // data output to data memory
-reg_15);  // register from Register Bank that connects to DMA
+m_data/*, // data output to data memory
+reg_15*/);  // register from Register Bank that connects to DMA
 
 // %% List of connections/wires in the processor %%
 
@@ -22,18 +22,18 @@ logic [2:0] alu_control_o, // function code for ALU from the control unit
 alu_control_e; // function code for ALU to Execution stage
 logic [3:0] register_A, register_B; // register bypass from Decode for the forward unit
 
-logic regw_o, alusrc_o, branche_o, memw_o, memtoreg_o,
+logic regw_o, alusrc_o, branche_o, memw_o, memtoreg_o, vector_o,
 branch_e, // control bits from the control unit
-regw_e, alusrc_e, memw_e, memtoreg_e, // control bits to Execution stage
-regw_m, memtoreg_m, // control bits to Memory stage
+regw_e, alusrc_e, memw_e, memtoreg_e, vector_e, // control bits to Execution stage
+regw_m, memtoreg_m, vector_m,// control bits to Memory stage
 regw_w, memtoreg_w; // control bits to Writeback stage
 
-logic [31:0] pc_adder_mux, // wire adder to PC selector MUX
+logic [N-1:0] pc_adder_mux, // wire adder to PC selector MUX
 pc_mux_reg, // wire MUX to PC register
 imm_ext_o, // imm wire extended to decode/exe pipe
 imm_ext_e; // imm wire in execution stage
 
-logic [31:0] opA_o, opB_o, // operands in point of origin
+logic [V-1:0] opA_o, opB_o, // operands in point of origin
 opA_e, opB_e, // operands in Execution stage
 opA_hazard, opB_hazard_imm, opB_hazard, // operands wires between MUXes in Exectuion Stage
 alu_result_e, // result data from the ALU in Execution stage
@@ -49,6 +49,7 @@ logic [1:0] select_op_A, select_op_B;
 
 logic [4:0] opCodeB;
 
+/***********OJO: revisar este codigo porque hay que cambiarlo********/
 assign m_address = (alu_result_m > 32'h4AFFF) ? 32'b0:alu_result_m;
 
 // %% List of modules per stage %%
@@ -56,7 +57,7 @@ assign m_address = (alu_result_m > 32'h4AFFF) ? 32'b0:alu_result_m;
 // --Fetch--
 
 // PC register
-register #(.N(32)) PC (.wen(1'b1), .rst(rst), .clk(clk), .in(pc_mux_reg), .out(pcf));
+register #(.N(N)) PC (.wen(1'b1), .rst(rst), .clk(clk), .in(pc_mux_reg), .out(pcf));
 
 // PC adder for next inst address
 adder pc_adder (.operandA(pcf), .operandB(32'b100), .result(pc_adder_mux), .cout());

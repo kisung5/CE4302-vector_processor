@@ -1,10 +1,12 @@
+import os
+
 operators = {
-    "mod": "00000",
     "add": "00001",
     "and": "00010",
     "sub": "00011",
     "mul": "00100",
     "cnb": "00101",
+    "mod": "00111",
     "beq": "01000",
     "bgt": "01001",
     "addi": "10000",
@@ -13,11 +15,6 @@ operators = {
     "sb": "10011",
     "lb": "10100",
     "lw": "10101",
-    "addv": "11000",    # Changed
-    "mulv": "11001",    # Changed
-    "movv": "11100",    # Changed
-    "svi": "11101",     # Changed
-    "lvi": "11110",     # Changed
 }
 
 registers = {
@@ -33,10 +30,10 @@ registers = {
     "r9": "1001",
     "t1": "1010",
     "t2": "1011",
-    "v1": "1100",   # Changed
-    "v2": "1101",   # Changed
-    "v3": "1110",   # Changed
-    "v4": "1111",   # Changed
+    "t3": "1100",
+    "v1": "1101",
+    "v2": "1110",
+    "s1": "1111",
 }
 
 labels = {}
@@ -49,8 +46,8 @@ def compile(instruction):
     opType = opcode[0:2]
     reg1 = registers[instruction[1]]
     reg2 = registers[instruction[2]]
-    # If the instruction is type A or VA
-    if(opcode[0:2] == "00" or opcode[0:3] == "110"):
+    # If the instruction is type A
+    if(opType == "00"):
         reg3 = registers[instruction[3]]
         zeroExt = "000000000000000"
         compiledInstructions.append([opcode, reg1, reg2, reg3, zeroExt])
@@ -59,7 +56,7 @@ def compile(instruction):
     else:
         imm = instruction[3]
         # If its a branch operation
-        if(opcode[0:2] == "01"):
+        if(opType == "01"):
             imm = labels[imm]
         imm = format(int(imm), '019b')
         compiledInstructions.append([opcode, reg1, reg2, imm])
@@ -67,25 +64,30 @@ def compile(instruction):
 
 
 # Main
-file = open("rsa.asmrsa", "r")
+QUARTUS_DIRECTORY = open(os.path.dirname(os.getcwd()) +
+                         '\\ProyectoGrupalI\\quartus_directory.txt', 'r').read()
+file = open("Compiler\\RSA_Decrypt.asmrsa", "r")
 fileArray = []
 pc = 0
 for line in file:
     line = line.lower()
     lineArray = line.split()
     if(len(lineArray) != 0):
-        pc += 4
         if(lineArray[0][-1] == ':'):
             newLabel = {lineArray[0][0:-1]: str(pc)}
             labels.update(newLabel)
         else:
+            pc += 4
             fileArray.append(lineArray)
 file.close()
 
 print(labels)
 print(fileArray)
 
-file = open("rsa.b", "w")
+
+file = open( #QUARTUS_DIRECTORY + 
+    'Compiler' + 
+    '\\' + 'RSA_Decrypt.b', "w")
 
 for instruction in fileArray:
     file.write(compile(instruction) + "\n")

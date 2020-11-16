@@ -86,7 +86,7 @@ module data_memory (
 	defparam
 		altsyncram_component.clock_enable_input_a = "BYPASS",
 		altsyncram_component.clock_enable_output_a = "BYPASS",
-		altsyncram_component.init_file = "flor.mif",
+		altsyncram_component.init_file = "../../../Users/ReiraCM/Documents/CE4302-vector_processor-main/CE4302-vector_processor-main/Compiler/data_to_mif_python/flor.mif",
 		altsyncram_component.intended_device_family = "Cyclone IV E",
 		altsyncram_component.lpm_hint = "ENABLE_RUNTIME_MOD=NO",
 		altsyncram_component.lpm_type = "altsyncram",

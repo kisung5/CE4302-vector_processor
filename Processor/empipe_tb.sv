@@ -4,7 +4,7 @@ logic clk, rst, regw_in, memw_in, regmem_in;
 logic regw_out, memw_out, regmem_out;
 logic [3:0] regScr_in, regScr_out;
 logic [31:0] ALUrslt_in, address_in, ALUrslt_out, address_out;
-logic [127:0] regVrslt_in, regVrslt_in;
+logic [127:0] regVrslt_in, regVrslt_out;
 
 // address, clock, data, wren, q
 

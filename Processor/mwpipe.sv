@@ -29,7 +29,7 @@ register #(.N(N)) readData (.wen(1'b1), .rst(rst), .clk(clk),
 	.in(readdata_M), .out(readdata_W));
 	
 // Vector register
-register #(.N(V)) readData (.wen(1'b1), .rst(rst), .clk(clk), 
+register #(.N(V)) regVrslt (.wen(1'b1), .rst(rst), .clk(clk), 
 	.in(regVrslt_M), .out(regVrslt_W));
 
 endmodule 

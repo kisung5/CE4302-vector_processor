@@ -4,7 +4,7 @@ operators = {
     "and": "00010",
     "sub": "00011",
     "mul": "00100",
-    "cnb": "00101",
+    "div": "00101",     # Changed
     "beq": "01000",
     "bgt": "01001",
     "addi": "10000",
@@ -12,9 +12,10 @@ operators = {
     "sll": "10010",
     "sb": "10011",
     "lb": "10100",
-    "lw": "10101",
+    # "lw": "10101",    # Changed
     "addv": "11000",    # Changed
     "mulv": "11001",    # Changed
+    "divv": "11010",    # Changed
     "movv": "11100",    # Changed
     "svi": "11101",     # Changed
     "lvi": "11110",     # Changed
@@ -32,7 +33,7 @@ registers = {
     "r8": "1000",
     "r9": "1001",
     "t1": "1010",
-    "t2": "1011",
+    "t2": "1011",   # Will use this for external register
     "v1": "1100",   # Changed
     "v2": "1101",   # Changed
     "v3": "1110",   # Changed

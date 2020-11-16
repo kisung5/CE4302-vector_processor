@@ -47,9 +47,14 @@ begin
 				carryout <= 1'b0;
 			end
 		3'b101 : 
-			begin // Operation concatenate
-//				result <= concatenate_result;
-				result <= {16'b0, operandA[7:0], operandB[7:0]};
+// 			begin // Operation concatenate
+// //				result <= concatenate_result;
+// 				result <= {16'b0, operandA[7:0], operandB[7:0]};
+// 				carryout <= 1'b0;
+// 			end
+			begin // Operation integer division
+// //				result <= concatenate_result;
+				result <= operandA / operandB;
 				carryout <= 1'b0;
 			end
 		

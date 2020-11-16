@@ -3,12 +3,12 @@ module Reg_bank_tb ();
 logic clk, we3, rst;
 logic [3:0] ra1, ra2, wa3;
 logic [127:0] /*wev,*/rd1, rd2, wd3;
-//logic [31:0] wd3/*, r15, rd1, rd2*/;
+logic [31:0] r_t2/*, r15, rd1, rd2*/;
 
 
 Reg_bank DUT (.clk(clk), .rst(rst), .we3(we3), 
 .ra1(ra1), .ra2(ra2), .wa3(wa3), /*.wev(wev),*/
-.wd3(wd3), /*.r_vga(r15),*/
+.wd3(wd3), .r_t2(r_t2),
 .rd1(rd1), .rd2(rd2));
 
 always #10 clk <= ~clk;

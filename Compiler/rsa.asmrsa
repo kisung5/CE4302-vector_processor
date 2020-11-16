@@ -1,5 +1,6 @@
 movv v1 r1 1
 mulv v1 v2 v3
+divv v1 v1 v4
 addv v2 v3 v4
 svi v1 v2 0
 lvi v3 v4 0
@@ -13,7 +14,7 @@ start:
     and r5 r3 r4
     sub r6 r2 r1
     mul r1 r1 r2
-    cnb r3 r3 r4
+    div r3 r3 r4
     beq zero r2 exit
     bgt r2 zero imm
 imm:

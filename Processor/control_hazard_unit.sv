@@ -1,13 +1,13 @@
-module control_hazard_unit
+module control_hazard_unit #(parameter N = 32)
 (input logic branchE,
 input logic [4:0] opCode,
-input logic [31:0] opeA, opeB,
+input logic [N-1:0] opeA, opeB,
 output logic select_pc, flush, stall);
 
 logic eq, gt;
 logic [2:0] logic_array;
 
-comparator operand_comparator (.operandA(opeA), .operandB(opeB),
+comparator #(.N(N)) operand_comparator (.operandA(opeA), .operandB(opeB),
 .eq(eq), .neq(), .lt(gt), .lte(), .gt(), .gte());
 
 always_comb begin

@@ -4,8 +4,8 @@ input logic we3,
 input logic [M-1:0] ra1, ra2, wa3,
 //input logic [V-1:0] wev,
 input logic [V-1:0] wd3,
-output logic [V-1:0] rd1, rd2/*,
-output reg [31:0] r_vga*/);
+output logic [V-1:0] rd1, rd2,
+output logic [31:0] r_t2);
 
 logic [31:0] rf [11:0];
 logic [127:0] rv [3:0];
@@ -19,7 +19,6 @@ begin
 		begin
         for (i=0; i<12; i++) rf[i] <= 32'b0;
 		  for (i=0; i<4; i++) rv[i] <= 128'b0;
-//		  r_vga <= 32'b0;
       end 
 	else if(we3) 
 	begin
@@ -35,5 +34,7 @@ end
 assign rd1 = (ra1 > 4'b1011)?/*(ra1 == 4'b1111) ? r_vga :*/rv[ra1-4'b1100] : {96'b0, rf[ra1]};
 
 assign rd2 = (ra2 > 4'b1011)?/*(ra2 == 4'b1111) ? r_vga :*/rv[ra2-4'b1100] : {96'b0, rf[ra2]};
+
+assign r_t2 = rf[4'b1011];
 
 endmodule

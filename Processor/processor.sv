@@ -12,15 +12,17 @@ reg_15);  // register from Register Bank that connects to DMA
 
 // %% List of connections/wires in the processor %%
 
-logic [31:0] inst_fetched; // wire between fdpipe and register bank
+logic [N-1:0] inst_fetched; // wire between fdpipe and register bank
+
 logic [3:0] register_src_e, // source register to Execution stage
 register_src_m, // source register to Memory stage
 register_src_w, // source register to Writeback stage
-registerB_decode; // register B to decode in Register Bank
+registerB_decode, // register B to decode in Register Bank
 
-logic [2:0] alu_control_o, // function code for ALU from the control unit
-alu_control_e; // function code for ALU to Execution stage
-logic [3:0] register_A, register_B; // register bypass from Decode for the forward unit
+alu_control_o, // function code for ALU from the control unit
+alu_control_e, // function code for ALU to Execution stage
+
+register_A, register_B; // register bypass from Decode for the forward unit
 
 logic regw_o, alusrc_o, branche_o, memw_o, memtoreg_o, vector_o,
 branch_e, // control bits from the control unit
@@ -37,6 +39,7 @@ logic [V-1:0] opA_o, opB_o, // operands in point of origin
 opA_e, opB_e, // operands in Execution stage
 opA_hazard, opB_hazard_imm, opB_hazard, // operands wires between MUXes in Exectuion Stage
 alu_result_e, // result data from the ALU in Execution stage
+alu_result_e_out, // final selected result in Execution stage
 alu_result_m, // result data from the ALU to Memory stage
 alu_result_w, // result data from the ALU to Writeback stage
 read_data_w, // read data from Memory to Writeback stage
@@ -48,6 +51,8 @@ regB; // single control for mux select for operand B
 logic [1:0] select_op_A, select_op_B;
 
 logic [4:0] opCodeB;
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /***********OJO: revisar este codigo porque hay que cambiarlo********/
 assign m_address = (alu_result_m > 32'h4AFFF) ? 32'b0:alu_result_m;
@@ -66,15 +71,17 @@ adder pc_adder (.operandA(pcf), .operandB(32'b100), .result(pc_adder_mux), .cout
 multiplexer pc_load_select (.d1(pc_adder_mux), .d2(imm_ext_e), .d3(32'b0), 
 .selector({1'b0,select_pc}), .out(pc_mux_reg));
 
-// Fetch/Decode instruction pipelined register
+/************Fetch/Decode instruction pipelined register**************/
 fdpipe fetch_decode (.stall_D(stall_fetch), .flush_F(rst || flush_decode), .clk(clk), 
 .inst_F(inst), .inst_D(inst_fetched));
+
 
 // --Decode--
 
 // Control unit, only operates in decode stage and is a combinational unit.
 control_unit control (.opcode(inst_fetched[31:27]), .ALUControl(alu_control_o), .RegW(regw_o), 
-.ALUSrc(alusrc_o), .BranchE(branche_o), .MemW(memw_o), .MemtoReg(memtoreg_o), .regB(regB));
+.ALUSrc(alusrc_o), .BranchE(branche_o), .MemW(memw_o), .MemtoReg(memtoreg_o), .regB(regB),
+.vectorMem(vector_o));
 
 // Instruction immidiate extender to 32 bits
 zeroextend extender (.operand(inst_fetched[18:0]), .result(imm_ext_o));
@@ -142,25 +149,32 @@ control_hazard_unit #(.N(N)) control_hazard
 .select_pc(select_pc), .flush(flush_decode), .stall(stall_fetch));
 
 // ALU 0
-alu #(.N(N)) alu_unit0  (.opcode(alu_control_e), // control
+alu #(.N(N)) alu_unit0  (.opcode(alu_control_e[2:0]), // control
 .operandA(opA_hazard[N-1:0]), .operandB(opB_hazard[N-1:0]), .result(alu_result_e[N-1:0]), // data
 .C_Flag(), .O_Flag(), .N_Flag(), .Z_Flag()); // flags - unused
 
 // ALU 1
-alu #(.N(N)) alu_unit1 (.opcode(alu_control_e), // control
+alu #(.N(N)) alu_unit1 (.opcode(alu_control_e[2:0]), // control
 .operandA(opA_hazard[(N*2)-1:N]), .operandB(opB_hazard[(N*2)-1:N]), .result(alu_result_e[(N*2)-1:N]), // data
 .C_Flag(), .O_Flag(), .N_Flag(), .Z_Flag()); // flags - unused
 
 // ALU 2
-alu #(.N(N)) alu_unit2 (.opcode(alu_control_e), // control
+alu #(.N(N)) alu_unit2 (.opcode(alu_control_e[2:0]), // control
 .operandA(opA_hazard[(N*3)-1:N*2]), .operandB(opB_hazard[(N*3)-1:N*2]), .result(alu_result_e[(N*3)-1:N*2]), // data
 .C_Flag(), .O_Flag(), .N_Flag(), .Z_Flag()); // flags - unused
 
 // ALU 3
-alu #(.N(N)) alu_unit3 (.opcode(alu_control_e), // control
+alu #(.N(N)) alu_unit3 (.opcode(alu_control_e[2:0]), // control
 .operandA(opA_hazard[V-1:N*3]), .operandB(opB_hazard[V-1:N*3]), .result(alu_result_e[V-1:N*3]), // data
 .C_Flag(), .O_Flag(), .N_Flag(), .Z_Flag()); // flags - unused
 
+// Operand B selector MUX register or imm
+multiplexer_4 #(.N(V)) alu_rslt_sel  (
+    .d1(alu_result_e), 
+    .d2(alu_result_e),
+    .d3({opA_hazard[N-1:0],opA_hazard[N-1:0],opA_hazard[N-1:0],opA_hazard[N-1:0]}),
+    .d4(),
+    .selector({alu_control_e[3],alu_control_e[0]}), .out(alu_result_e_out));
 
 // (input logic clk, rst, stall_M,
 // input logic regw_E, memw_E, regmem_E, vect_E,
@@ -175,7 +189,7 @@ empipe execution_memory (.clk(clk), .rst(rst), .stall_M(stall_mem),
 // input control
 .regw_E(regw_e), .memw_E(memw_e), .regmem_E(memtoreg_e), .vect_E(vector_e),
 // input data
-.regScr_E(register_src_e), .ALUrslt_E(opB_hazard_imm), .address_E(alu_result_e),
+.regScr_E(register_src_e), .ALUrslt_E(opB_hazard_imm), .address_E(alu_result_e_out),
 // output control
 .regw_M(regw_m), .memw_M(memw_m), .regmem_M(memtoreg_m), .vect_M(vector_m),
 // output data

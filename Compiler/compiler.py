@@ -16,6 +16,7 @@ operators = {
     "addv": "11000",    # Changed
     "mulv": "11001",    # Changed
     "divv": "11010",    # Changed
+    "rep": "11011",     # Changed
     "movv": "11100",    # Changed
     "svi": "11101",     # Changed
     "lvi": "11110",     # Changed
@@ -32,7 +33,7 @@ registers = {
     "r7": "0111",
     "r8": "1000",
     "r9": "1001",
-    "t1": "1010",
+    "t1": "1010",   # Will use this for I/O
     "t2": "1011",   # Will use this for external register
     "v1": "1100",   # Changed
     "v2": "1101",   # Changed

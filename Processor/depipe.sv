@@ -2,18 +2,16 @@
 // Important control set:
 // flush_E, flush the decoded instrucion
 // Inputs and outputs decoded and control results from instruction
-module depipe #(parameter V = 128, N = 32, M = 4, L = 3)
+module depipe #(parameter V = 128, N = 32, M = 4)
 (input logic flush_E, clk, stall_E,
 input logic regw_D, memw_D, regmem_D, ALUope_D, branch_D, vect_D,
 input [4:0] op_code_D,
-input [L-1:0] ALUctrl_D, 
-input [M-1:0] regScr_D, regAD, regBD,
+input [M-1:0] regScr_D, regAD, regBD, ALUctrl_D,
 input [N-1:0] inm_D,
 input [V-1:0] regA_D, regB_D, /*regVA_D, regVB_D,*/
 output logic regw_E, memw_E, regmem_E, ALUope_E, branch_E, vect_E,
 output [4:0] op_code_E,
-output [L-1:0] ALUctrl_E, 
-output [M-1:0] regScr_E, regAE, regBE,
+output [M-1:0] regScr_E, regAE, regBE, ALUctrl_E, 
 output [N-1:0] inm_E,
 output [V-1:0] regA_E, regB_E /*regVA_E, regVB_E*/);
 
@@ -41,7 +39,7 @@ register #(.N(5)) opCode (.wen(1'b1 && ~stall_E), .rst(flush_E), .clk(clk),
 
 	
 // ALU control and register data
-register #(.N(L)) ALUctrl (.wen(1'b1 && ~stall_E), .rst(flush_E), .clk(clk), 
+register #(.N(M)) ALUctrl (.wen(1'b1 && ~stall_E), .rst(flush_E), .clk(clk), 
 	.in(ALUctrl_D), .out(ALUctrl_E));
 
 register #(.N(M)) regScr (.wen(1'b1 && ~stall_E), .rst(flush_E), .clk(clk), 

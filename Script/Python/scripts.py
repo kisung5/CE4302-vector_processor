@@ -1,3 +1,4 @@
+# ================================= IMPORTS =================================
 import numpy as np
 from PIL import Image
 import resource
@@ -5,6 +6,8 @@ import sys
 resource.setrlimit(resource.RLIMIT_STACK, (2**29, -1))
 sys.setrecursionlimit(10**6)
 
+
+# ================================= SWITCH INPUT =================================
 switch = '16'
 
 switches = {
@@ -25,6 +28,8 @@ switches = {
     '15': 120200,
     '16': 120300,
 }
+
+# ================================= MICROARCHITECTURE =================================
 
 registers = {
     "zero": 0,
@@ -47,6 +52,10 @@ registers = {
 
 memory = np.array([0] * (200000), dtype="uint8")
 
+
+# ================================= IMAGE READ =================================
+
+
 inputImage = Image.open("image.jpg").convert('L')
 inputImage.load()
 inputImage = np.asarray(inputImage, dtype="uint8")
@@ -54,7 +63,13 @@ outputImage = Image.fromarray(inputImage, 'L')
 outputImage.save('input.jpg')
 inputImage = inputImage.flatten()
 
+
+# ================================= IMAGE TO MEMORY =================================
+
 memory[0:160000] = inputImage[0:160000]
+
+
+# ================================= ISA =================================
 
 def addi(dest: str, reg1: str, imm: int):
     registers[dest] = registers[reg1] + imm
@@ -110,6 +125,8 @@ def lvi(valueArray, indexArray):
 def movv(dest: str, reg1: str, imm: int):
     registers[dest][imm - 1] = registers[reg1]
 
+
+# ================================= ASM SCRIPT =================================
 
 def nearestNeighborInit():
     # Factor = 4
@@ -170,7 +187,7 @@ def updateOffset():
     rep('v2', 'r4')
     addv('v1', 'v1', 'v2')
     add('r7', 'r7', 'r3')
-    if not(beq('zero', 'zero', 'nearestNeighborLoop')):
+    if(not beq('zero', 'zero', 'nearestNeighborLoop')):
         pass
 
 
@@ -178,7 +195,7 @@ def nearestNeighborEnd():
     pass
 
 
-# MAIN
+# ================================= PYTHON MAIN =================================
 nearestNeighborInit()
 outputImage = memory[160000:200000]
 outputImage = outputImage.reshape(200, 200)

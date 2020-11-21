@@ -8,7 +8,7 @@ sys.setrecursionlimit(10**6)
 
 
 # ================================= SWITCH INPUT =================================
-switch = '16'
+switch = '1'
 
 switches = {
     '1': 0,

@@ -85,12 +85,13 @@ def compile(instruction):
             if (not validateRegisters('REP', reg1, reg2)):
                 print("Invalid registers for instruction ->", instruction)
                 return "========= COMPILATION ERROR ============ [" + ' '.join([str(elem) for elem in instruction]) + "]"
+            reg3 = registers['zero']
         # Normal vector arithmetic
         else:
             if (not validateRegisters('VA', reg1, reg2)):
                 print("Invalid registers for instruction ->", instruction)
                 return "========= COMPILATION ERROR ============ [" + ' '.join([str(elem) for elem in instruction]) + "]"
-        reg3 = registers[instruction[3]]
+            reg3 = registers[instruction[3]]
         zeroExt = "000000000000000"
         compiledInstructions.append([opcode, reg1, reg2, reg3, zeroExt])
         return opcode + reg1 + reg2 + reg3 + zeroExt

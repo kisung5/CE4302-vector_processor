@@ -12,10 +12,10 @@ vector_ld_st #(128,32) DUT (.clk(clk), .rst(rst), .mem_wen(mem_wen),
 
 								
 initial begin
-	rst = 0; clk = 0;
+	rst = 0; clk = 0; stall_cpu = 0;
 	#10 input_vector_B = 128'h12121444511AAAFFFFFFF;
 	#10 mem_wen = 1;
-	#10 mem_wen = 0;
+	#10 mem_wen = 0;#10;
 	#10 mem_wen_v = 1;
 	#10 mem_wen_v = 0;	
 end

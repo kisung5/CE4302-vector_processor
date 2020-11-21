@@ -1,21 +1,21 @@
 module counter (input logic wen_v, clk, rst, 
 					 output logic stall, output logic [1:0] count);
 
-		always @(clk)
+		always_ff @(posedge clk)
 		begin
 			if (rst) begin
-				count = 2'b00;
-				stall <= 1'b0;
+				count = 0;
+				stall = 0;
 			end
 			else if (wen_v) begin
-				count = 2'b00;
-				stall <= 1'b1;
+				count = 0;
+				stall = 1;
 			end
 			else if (count == 3)
-				stall <= 1'b0;
+				stall = 0;
 			else if (stall) begin
 				count = count + 1;
-				stall <= 1'b1; 
+				stall = 1;
 			end
 		end
 

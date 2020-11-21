@@ -54,15 +54,15 @@ logic [4:0] opCodeB;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/***********OJO: revisar este codigo porque hay que cambiarlo********/
-assign m_address = (alu_result_m > 32'h4AFFF) ? 32'b0:alu_result_m;
+// Assigns memory address if it in memory range
+assign m_address = (alu_result_m > 32'h30D3F) ? 32'b0:alu_result_m;
 
 // %% List of modules per stage %%
 
 // --Fetch--
 
 // PC register
-register #(.N(N)) PC (.wen(1'b1), .rst(rst), .clk(clk), .in(pc_mux_reg), .out(pcf));
+register #(.N(N)) PC (.wen(1'b1 && ~stall_mem), .rst(rst), .clk(clk), .in(pc_mux_reg), .out(pcf));
 
 // PC adder for next inst address
 adder pc_adder (.operandA(pcf), .operandB(32'b100), .result(pc_adder_mux), .cout());
@@ -70,6 +70,7 @@ adder pc_adder (.operandA(pcf), .operandB(32'b100), .result(pc_adder_mux), .cout
 // Mux selector for PC load data
 multiplexer pc_load_select (.d1(pc_adder_mux), .d2(imm_ext_e), .d3(32'b0), 
 .selector({1'b0,select_pc}), .out(pc_mux_reg));
+
 
 /************Fetch/Decode instruction pipelined register**************/
 fdpipe fetch_decode (.stall_D(stall_fetch), .flush_F(rst || flush_decode), .clk(clk), 

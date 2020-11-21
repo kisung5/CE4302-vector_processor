@@ -1,26 +1,39 @@
-movv v1 r1 1
-mulv v1 v2 v3
-divv v1 v1 v4
-addv v2 v3 v4
-svi v1 v2 0
-lvi v3 v4 0
-ADDI R1 ZERO 100
-addi r2 zero 300
-addi r3 zero 15
-addi r4 zero 10
-start:
-    mod r3 r2 r1
-    add r3 r2 r1
-    and r5 r3 r4
-    sub r6 r2 r1
-    mul r1 r1 r2
-    div r3 r3 r4
-    beq zero r2 exit
-    bgt r2 zero imm
-imm:
-    addi r7 zero 100
-    srl r7 r7 2
-    sll r8 r7 3
-exit:
-    sb r8 zero 12
-    lb r9 zero 12
+init:    
+    addi r1 zero 4
+    addi r2 zero 2
+    addi r3 zero 300
+    addi r4 zero 200
+    addi r5 zero 10000
+    addi r6 zero 0
+    addi r8 zero 100
+    addi r9 zero 1
+    addi t1 zero 160000
+    movv v1 t1 1
+    addi t1 zero 160001
+    movv v1 t1 2
+    addi t1 zero 160200
+    movv v1 t1 3
+    addi t1 zero 160201
+    movv v1 t1 4
+    addi t1 zero 2
+    movv v1 t1 4
+    addi t1 zero 2
+    rep v3 t1
+nearestNeighborLoop:
+    beq r5 r6 nearestNeighborEnd
+    lb t1 r7 0
+    rep v2 t1
+    svi v2 v1 0
+    addv v1 v1 v3
+    addi r6 r6 1
+    addi r7 r7 1
+    mod t2 r6 r8
+    beq t2 zero updateOffset
+    beq zero zero nearestNeighborLoop
+updateOffset:
+    rep v2 r4
+    addv v1 v1 v2
+    add r7 r7 r3
+    beq zero zero nearestNeighborLoop
+nearestNeighborEnd:
+    add zero zero zero

@@ -14,7 +14,7 @@ initial begin
 	wen_v = 0;
 	#10 wen_v = 1;
 	#10 wen_v = 0;
-	#40 wen_v = 1;
+	#80 wen_v = 1;
 	#10 wen_v = 0;
 	
 end

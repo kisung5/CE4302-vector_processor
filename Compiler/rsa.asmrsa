@@ -1,39 +1,206 @@
-init:    
-    addi r1 zero 4
-    addi r2 zero 2
+init:
+    lb r7 zero 249998
+    addi t1 zero 4
+    mod r1 r7 t1
+    div r7 r7 t1
+    addi t1 zero 100
+    mul r1 t1 r1
+    addi t1 zero 40000
+    mul r7 t1 r7
+    add r7 r1 r7
+    addi r1 zero 249997
+    lb r1 r1 0
+    beq r1 zero nearestNeighborInit
+
+
+bilinearInit:
+    rep v1 zero
+    rep v2 zero
+    addi t1 zero 1
+    movv v3 t1 1
+    movv v3 t1 3
+    addi t1 zero 2
+    movv v3 t1 0
+    movv v3 t1 2
+    addi t1 zero 2
+    movv v4 t1 1
+    movv v4 t1 3
+    addi t1 zero 1
+    movv v4 t1 0
+    movv v4 t1 2
+    addi r2 zero 160000
+    addi r3 zero 400
+    addi r4 zero 298
+    addi r5 zero 9801
+    addi r6 zero 0
+    addi r8 zero 100
+
+
+bilinearLoop:
+    beq r6 r5 end
+    lb r1 r7 0
+    movv v1 r1 0
+    lb r1 r7 1
+    movv v1 r1 1
+    add t1 r7 r3
+    lb r1 t1 0
+    movv v1 r1 2
+    lb r1 t1 1
+    movv v1 r1 3
+    add t1 zero r2
+    movv v2 t1 0
+    addi t1 t1 3
+    movv v2 t1 1
+    addi t1 zero 3
+    mul t1 t1 r4
+    add t1 t1 r2
+    movv v2 t1 2
+    addi t1 t1 3
+    movv v2 t1 3
+    svi v1 v2 0
+    lb t1 r7 0
+    rep v1 t1
+    lb t1 r7 1
+    movv v2 t1 0
+    movv v2 t1 1
+    add t1 r7 r3
+    lb t1 t1 0
+    movv v2 t1 2
+    movv v2 t1 3
+    mulv v1 v1 v3
+    mulv v2 v2 v4
+    addv v1 v1 v2
+    addi t1 zero 3
+    rep v2 t1
+    divv v1 v1 v2
+    add t1 zero r2
+    addi t1 t1 1
+    movv v2 t1 0
+    addi t1 t1 1
+    movv v2 t1 1
+    add t1 r2 r4
+    movv v2 t1 2
+    add t1 t1 r4
+    movv v2 t1 3
+    svi v1 v2 0
+    add t1 r3 r7
+    lb r1 t1 0
+    movv v1 r1 0
+    movv v1 r1 1
+    lb r1 t1 1
+    rep v2 r1
+    add t1 zero r7
+    lb r1 t1 1
+    movv v1 r1 2
+    movv v1 r1 3
+    mulv v1 v1 v3
+    mulv v2 v2 v4
+    addv v1 v1 v2
+    addi t1 zero 3
+    rep v2 t1
+    divv v1 v1 v2
+    addi t1 zero 3
+    mul t1 r4 t1
+    add t1 t1 r2
+    addi t1 t1 1
+    movv v2 t1 0
+    addi t1 t1 1
+    movv v2 t1 1
+    add t1 r4 r2
+    addi t1 t1 3
+    movv v2 t1 2
+    add t1 t1 r4
+    movv v2 t1 3
+    svi v1 v2 0
+    add r1 r2 r4
+    lb t1 r1 0
+    movv v1 t1 0
+    movv v1 t1 1
+    lb t1 r1 3
+    movv v2 t1 0
+    movv v2 t1 1
+    add r1 r1 r4
+    lb t1 r1 0
+    movv v1 t1 2
+    movv v1 t1 3
+    lb t1 r1 3
+    movv v2 t1 2
+    movv v2 t1 3
+    mulv v1 v1 v3
+    mulv v2 v2 v4
+    addv v1 v1 v2
+    addi t1 zero 3
+    rep v2 t1
+    divv v1 v1 v2
+    add t1 r2 r4
+    addi r1 t1 1
+    movv v2 r1 0
+    addi t1 t1 2
+    movv v2 t1 1
+    add r1 r1 r4
+    movv v2 r1 2
+    add t1 t1 r4
+    movv v2 t1 3
+    svi v1 v2 0
+    addi r7 r7 1
+    addi r2 r2 3
+    addi r6 r6 1
+    addi t1 zero 1
+    sub t1 r8 t1
+    mod t1 r6 t1
+    beq t1 zero bilinearUpdateOffset
+    beq zero zero bilinearLoop
+
+
+bilinearUpdateOffset:
+    add t1 r4 r4
+    addi t1 t1 1
+    add r2 r2 t1
+    addi t1 zero 3
+    mul t1 r8 t1
+    add r7 t1 r7
+    addi r7 r7 1
+    beq zero zero bilinearLoop
+
+
+nearestNeighborInit:
     addi r3 zero 300
     addi r4 zero 200
     addi r5 zero 10000
     addi r6 zero 0
     addi r8 zero 100
-    addi r9 zero 1
+    addi r9 zero 0
     addi t1 zero 160000
-    movv v1 t1 1
+    movv v1 t1 0
     addi t1 zero 160001
-    movv v1 t1 2
+    movv v1 t1 1
     addi t1 zero 160200
-    movv v1 t1 3
+    movv v1 t1 2
     addi t1 zero 160201
-    movv v1 t1 4
-    addi t1 zero 2
-    movv v1 t1 4
+    movv v1 t1 3
     addi t1 zero 2
     rep v3 t1
+
+
 nearestNeighborLoop:
-    beq r5 r6 nearestNeighborEnd
+    beq r5 r6 end
     lb t1 r7 0
     rep v2 t1
     svi v2 v1 0
     addv v1 v1 v3
     addi r6 r6 1
     addi r7 r7 1
-    mod t2 r6 r8
-    beq t2 zero updateOffset
+    mod t1 r6 r8
+    beq t1 zero nearestNeighborUpdateOffset
     beq zero zero nearestNeighborLoop
-updateOffset:
+
+
+nearestNeighborUpdateOffset:
     rep v2 r4
     addv v1 v1 v2
     add r7 r7 r3
     beq zero zero nearestNeighborLoop
-nearestNeighborEnd:
-    add zero zero zero
+
+
+end:
+    addi r9 zero 1

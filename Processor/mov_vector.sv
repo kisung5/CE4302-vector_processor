@@ -3,7 +3,7 @@ module mov_vector #(parameter V = 128, N = 32)
 				input logic [1:0] imm,  output logic [V-1:0] dst);
 				
 	
-	always @*
+	always_comb
 	begin
 		case(imm)
 			0: dst = {vector_input[127:32], src};

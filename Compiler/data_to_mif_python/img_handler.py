@@ -6,14 +6,14 @@ import sys
 def txt_to_mif():
     # This function extracts the data from the source text file.
     # Image in '6.txt' file, using int values
-    data_file = open("6.txt", "r")
+    data_file = open("Compiler/data_to_mif_python/input.txt", "r")
     lines = data_file.readlines()
     data_file.close()
-    data_stream = lines[5]
-    data_stream = data_stream.split()
-    bitmap = np.array(data_stream)
+    # data_stream = lines[5]
+    # data_stream = data_stream.split()
+    bitmap = np.array(lines)
     bitmap = bitmap.astype(np.uint8)
-    string_array = ["DEPTH = " + str(len(bitmap) + int(len(bitmap)/2)) + ";\n",
+    string_array = ["DEPTH = " + str(len(bitmap) + int(len(bitmap)/16)*9) + ";\n",
                     "WIDTH = " + str(8) + ";\n",
                     "ADDRESS_RADIX = DEC;\n",
                     "DATA_RADIX = DEC;\n",
@@ -26,7 +26,7 @@ def txt_to_mif():
         temp_string += ";\n"
         string_array.append(temp_string)
         counter += 1
-    for j in range(int(len(bitmap)/2)):
+    for j in range(int(len(bitmap)/16)*9):
         temp_string = str(counter) + " : "
         temp_string += str(0)
         temp_string += ";\n"
@@ -88,10 +88,10 @@ def bin_to_jpeg():
     im.save('image_mips.jpg', 'jpeg')
 
 
-# if __name__ == '__main__':
-#     # get the second argument from the command line
-#
-#     if len(sys.argv) == 2:
-#         globals()[sys.argv[1]]()
-#     else:
-#         globals()[sys.argv[1]](sys.argv[2])
+if __name__ == '__main__':
+    # get the second argument from the command line
+    txt_to_mif()
+    # if len(sys.argv) == 2:
+    #     globals()[sys.argv[1]]()
+    # else:
+    #     globals()[sys.argv[1]](sys.argv[2])

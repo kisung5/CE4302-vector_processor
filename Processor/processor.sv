@@ -39,6 +39,7 @@ logic [V-1:0] opA_o, opB_o, // operands in point of origin
 opA_e, opB_e, // operands in Execution stage
 opA_hazard, opB_hazard_imm, opB_hazard, // operands wires between MUXes in Exectuion Stage
 alu_result_e, // result data from the ALU in Execution stage
+movv_alu_result, // mov vector conecction
 alu_result_e_out, // final selected result in Execution stage
 alu_result_m, // result data from the ALU to Memory stage
 alu_result_w, // result data from the ALU to Writeback stage
@@ -54,15 +55,15 @@ logic [4:0] opCodeB;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/***********OJO: revisar este codigo porque hay que cambiarlo********/
-assign m_address = (alu_result_m > 32'h4AFFF) ? 32'b0:alu_result_m;
+// Assigns memory address if it in memory range
+assign m_address = (alu_result_m > 32'h3D08F) ? 32'b0:alu_result_m;
 
 // %% List of modules per stage %%
 
 // --Fetch--
 
 // PC register
-register #(.N(N)) PC (.wen(1'b1), .rst(rst), .clk(clk), .in(pc_mux_reg), .out(pcf));
+register #(.N(N)) PC (.wen(1'b1 && ~stall_mem), .rst(rst), .clk(clk), .in(pc_mux_reg), .out(pcf));
 
 // PC adder for next inst address
 adder pc_adder (.operandA(pcf), .operandB(32'b100), .result(pc_adder_mux), .cout());
@@ -70,6 +71,7 @@ adder pc_adder (.operandA(pcf), .operandB(32'b100), .result(pc_adder_mux), .cout
 // Mux selector for PC load data
 multiplexer pc_load_select (.d1(pc_adder_mux), .d2(imm_ext_e), .d3(32'b0), 
 .selector({1'b0,select_pc}), .out(pc_mux_reg));
+
 
 /************Fetch/Decode instruction pipelined register**************/
 fdpipe fetch_decode (.stall_D(stall_fetch), .flush_F(rst || flush_decode), .clk(clk), 
@@ -168,12 +170,15 @@ alu #(.N(N)) alu_unit3 (.opcode(alu_control_e[2:0]), // control
 .operandA(opA_hazard[V-1:N*3]), .operandB(opB_hazard[V-1:N*3]), .result(alu_result_e[V-1:N*3]), // data
 .C_Flag(), .O_Flag(), .N_Flag(), .Z_Flag()); // flags - unused
 
-// Operand B selector MUX register or imm
+// MOVV
+mov_vector #(.V(V), .N(N)) movv (.src(opA_hazard[31:0]), .vector_input(opB_hazard), .imm(imm_ext_e[1:0]), .dst(movv_alu_result));
+
+// Result select mux between ALU and vector mov/rep operations
 multiplexer_4 #(.N(V)) alu_rslt_sel  (
     .d1(alu_result_e), 
     .d2(alu_result_e),
     .d3({opA_hazard[N-1:0],opA_hazard[N-1:0],opA_hazard[N-1:0],opA_hazard[N-1:0]}),
-    .d4(),
+    .d4(movv_alu_result),
     .selector({alu_control_e[3],alu_control_e[0]}), .out(alu_result_e_out));
 
 // (input logic clk, rst, stall_M,
@@ -198,6 +203,9 @@ empipe execution_memory (.clk(clk), .rst(rst), .stall_M(stall_mem),
 // --Memory--
 // ATENTION: This needs a new module for vector loads and stores
 // This stage has no modules, data memory is outside the processor
+
+
+
 
 // (input logic clk, rst, stall_W,
 // input logic regw_M, regmem_M,

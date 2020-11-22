@@ -1,6 +1,6 @@
 module processor_tb ();
 
-logic clk, rst, mem_e;
+logic clk, rst, mem_e, reg15;
 logic [31:0] inst, data_read, pc, address, data_write;
 
 processor DUT 
@@ -10,7 +10,8 @@ processor DUT
 .memw_m(mem_e), // memory write enable output control
 .pcf(pc), // pc address output to inst memory
 .m_address(address), // memory address output to data memory
-.m_data(data_write));
+.m_data(data_write),
+.reg_15(reg15));
 
 always #10 clk <= ~clk;
 

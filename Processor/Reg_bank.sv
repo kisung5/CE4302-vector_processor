@@ -24,17 +24,15 @@ begin
 	begin
 		if(wa3 > 4'b1011)
 			rv[wa3-4'b1100] <= wd3;
-		else //if (we3 & wa3 != 15) 
+		else
 			rf[wa3] <= wd3[N-1:0];
 	end
-//	else
-//		r_vga <= (we3) ? wd3 : r_vga;
 end
 
-assign rd1 = (ra1 > 4'b1011)?/*(ra1 == 4'b1111) ? r_vga :*/rv[ra1-4'b1100] : {96'b0, rf[ra1]};
+assign rd1 = (ra1 > 4'b1011)?rv[ra1-4'b1100] : {96'b0, rf[ra1]};
 
-assign rd2 = (ra2 > 4'b1011)?/*(ra2 == 4'b1111) ? r_vga :*/rv[ra2-4'b1100] : {96'b0, rf[ra2]};
+assign rd2 = (ra2 > 4'b1011)?rv[ra2-4'b1100] : {96'b0, rf[ra2]};
 
-assign r_t2 = rf[4'b1011];
+assign r_t2 = rf[4'b1001];
 
 endmodule

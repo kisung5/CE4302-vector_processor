@@ -24,7 +24,7 @@ alu_control_e, // function code for ALU to Execution stage
 
 register_A, register_B; // register bypass from Decode for the forward unit
 
-logic regw_o, alusrc_o, branche_o, memw_o, memtoreg_o, vector_o,
+logic regw_o, alusrc_o, branche_o, memw_o, memtoreg_o, vector_o, memw_en,
 branch_e, // control bits from the control unit
 regw_e, alusrc_e, memw_e, memtoreg_e, vector_e, // control bits to Execution stage
 regw_m, memtoreg_m, vector_m,// control bits to Memory stage
@@ -33,16 +33,19 @@ regw_w, memtoreg_w; // control bits to Writeback stage
 logic [N-1:0] pc_adder_mux, // wire adder to PC selector MUX
 pc_mux_reg, // wire MUX to PC register
 imm_ext_o, // imm wire extended to decode/exe pipe
-imm_ext_e; // imm wire in execution stage
+imm_ext_e, // imm wire in execution stage
+to_mem_address;
 
 logic [V-1:0] opA_o, opB_o, // operands in point of origin
 opA_e, opB_e, // operands in Execution stage
 opA_hazard, opB_hazard_imm, opB_hazard, // operands wires between MUXes in Exectuion Stage
+opB_mem,
 alu_result_e, // result data from the ALU in Execution stage
 movv_alu_result, // mov vector conecction
 alu_result_e_out, // final selected result in Execution stage
 alu_result_m, // result data from the ALU to Memory stage
 alu_result_w, // result data from the ALU to Writeback stage
+read_data_m,
 read_data_w, // read data from Memory to Writeback stage
 result_w; // data selected for writeback in register bank
 
@@ -56,7 +59,7 @@ logic [4:0] opCodeB;
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // Assigns memory address if it in memory range
-assign m_address = (alu_result_m > 32'h3D08F) ? 32'b0:alu_result_m;
+assign m_address = (to_mem_address > 32'h3D08F) ? 32'b0:to_mem_address;
 
 // %% List of modules per stage %%
 
@@ -133,11 +136,11 @@ depipe decode_execution (.flush_E(rst || flush_decode), .clk(clk), .stall_E(stal
 // --Execution--
 
 // Operand A selector MUX for hazard unit
-multiplexer_4 #(.N(V)) opA_select (.d1(opA_e), .d2(alu_result_m), .d3(input_data), .d4(result_w), 
+multiplexer_4 #(.N(V)) opA_select (.d1(opA_e), .d2(alu_result_m), .d3(read_data_m), .d4(result_w), 
 .selector(select_op_A), .out(opA_hazard));
 
 // Operand B selector MUX for hazard unit
-multiplexer_4 #(.N(V)) opB_select (.d1(opB_e), .d2(alu_result_m), .d3(input_data), .d4(result_w), 
+multiplexer_4 #(.N(V)) opB_select (.d1(opB_e), .d2(alu_result_m), .d3(read_data_m), .d4(result_w), 
 .selector(select_op_B), .out(opB_hazard_imm));
 
 // Operand B selector MUX register or imm
@@ -196,15 +199,21 @@ empipe execution_memory (.clk(clk), .rst(rst), .stall_M(stall_mem),
 // input data
 .regScr_E(register_src_e), .ALUrslt_E(opB_hazard_imm), .address_E(alu_result_e_out),
 // output control
-.regw_M(regw_m), .memw_M(memw_m), .regmem_M(memtoreg_m), .vect_M(vector_m),
+.regw_M(regw_m), .memw_M(memw_en), .regmem_M(memtoreg_m), .vect_M(vector_m),
 // output data
-.regScr_M(register_src_m), .ALUrslt_M(m_data), .address_M(alu_result_m));
+.regScr_M(register_src_m), .ALUrslt_M(opB_mem), .address_M(alu_result_m));
 
 // --Memory--
 // ATENTION: This needs a new module for vector loads and stores
 // This stage has no modules, data memory is outside the processor
 
-
+vector_ld_st #(.V(V), .N(N)) vector_ld_st_unit
+(.clk(clk), .rst(rst), .mem_wen(memw_en), .mem_wen_v(vector_m),
+.mem_data(input_data),
+.input_vector_A(alu_result_m), .input_vector_B(opB_mem),
+.stall_cpu(stall_mem), .mem_wen_output(memw_m),
+.m_address(to_mem_address), .to_mem_data(m_data),
+.output_vector(read_data_m));
 
 
 // (input logic clk, rst, stall_W,
@@ -220,7 +229,7 @@ mwpipe memory_writeback (.clk(clk), .rst(rst), .stall_W(stall_mem),
 // input control
 .regw_M(regw_m), .regmem_M(memtoreg_m),
 // input data
-.regScr_M(register_src_m), .ALUrslt_M(alu_result_m), .readdata_M(input_data),
+.regScr_M(register_src_m), .ALUrslt_M(alu_result_m), .readdata_M(read_data_m),
 // output control
 .regw_W(regw_w), .regmem_W(memtoreg_w),
 // output data

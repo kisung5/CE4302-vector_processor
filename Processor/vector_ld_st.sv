@@ -20,126 +20,75 @@ logic [2:0] step;
 counter count_enable (.wen_v(mem_wen_v), .clk(clk), .rst(rst), 
 							 .stall(enable_vec), .count(step));
 
-always_ff @(negedge clk) /*begin
-	if (rst) begin
-		m_address <= 32'b0;
-		output_vector <= 128'b0; 
-		to_mem_data <= 32'b0;
-	end
-	else */
-	//if (mem_wen_v) begin
+always_ff @(negedge clk)
 	case (step)
-//		0: begin
-//				m_address <= input_vector_A[31:0];
-//				to_mem_data <= input_vector_B[31:0];
-//				output_vector <= mem_data;
-//			end
 		1: if (mem_wen) begin 
-//				m_address <= input_vector_A[31:0];
-//				to_mem_data <= input_vector_B[31:0];
 				output_vector <= 128'b0;
 			end
 			else begin
-//				m_address <= input_vector_A[31:0];
-//				to_mem_data <= 32'b0;
 				output_vector <= {96'b0, mem_data};
 			end
 		2: if (mem_wen) begin 
-//				m_address <= input_vector_A[63:32];
-//				to_mem_data <= input_vector_B[63:32];
 				output_vector <= 128'b0;
 			end
 			else begin
-//				m_address <= input_vector_A[63:32];
-//				to_mem_data <= 32'b0;
 				output_vector <= {64'b0, mem_data, output_vector[31:0]};
 			end
 		3: if (mem_wen) begin 
-//				m_address <= input_vector_A[95:64];
-//				to_mem_data <= input_vector_B[95:64];
 				output_vector <= 128'b0;
 			end
 			else begin
-//				m_address <= input_vector_A[95:64];
-//				to_mem_data <= 32'b0;
 				output_vector <= {32'b0, mem_data, output_vector[63:0]};
 			end
 		4: if (mem_wen) begin 
-//				m_address <= input_vector_A[127:96];
-//				to_mem_data <= input_vector_B[127:96];
 				output_vector <= 128'b0;
 			end
 			else begin
-//				m_address <= input_vector_A[127:96];
-//				to_mem_data <= 32'b0;
 				output_vector <= {mem_data, output_vector[95:0]};
 			end
 		default: begin
-//			m_address <= input_vector_A[31:0];
-//			to_mem_data <= input_vector_B[31:0];
 			output_vector <= {96'b0, mem_data};
 		end
 	endcase
-	//end
-//	else begin
-//		m_address <= input_vector_A[31:0];
-//		to_mem_data <= input_vector_B[31:0];
-//		output_vector <= mem_data;
-//	end
-//end
 
 
 always_comb begin
 	case (step)
-//		0: begin
-//				m_address <= input_vector_A[31:0];
-//				to_mem_data <= input_vector_B[31:0];
-//				output_vector <= mem_data;
-//			end
 		1: if (mem_wen) begin 
 				m_address <= input_vector_A[31:0];
 				to_mem_data <= input_vector_B[31:0];
-//				output_vector <= 128'b0;
 			end
 			else begin
 				m_address <= input_vector_A[31:0];
 				to_mem_data <= 32'b0;
-//				output_vector <= {96'b0, mem_data};
 			end
 		2: if (mem_wen) begin 
 				m_address <= input_vector_A[63:32];
 				to_mem_data <= input_vector_B[63:32];
-//				output_vector <= 128'b0;
 			end
 			else begin
 				m_address <= input_vector_A[63:32];
 				to_mem_data <= 32'b0;
-//				output_vector <= {64'b0, mem_data, output_vector[31:0]};
 			end
 		3: if (mem_wen) begin 
 				m_address <= input_vector_A[95:64];
 				to_mem_data <= input_vector_B[95:64];
-//				output_vector <= 128'b0;
 			end
 			else begin
 				m_address <= input_vector_A[95:64];
 				to_mem_data <= 32'b0;
-//				output_vector <= {32'b0, mem_data, output_vector[63:0]};
 			end
 		4: if (mem_wen) begin 
 				m_address <= input_vector_A[127:96];
 				to_mem_data <= input_vector_B[127:96];
-//				output_vector <= 128'b0;
 			end
 			else begin
 				m_address <= input_vector_A[127:96];
 				to_mem_data <= 32'b0;
-//				output_vector <= {mem_data, output_vector[95:0]};
 			end
 		default: begin
 			m_address <= input_vector_A[31:0];
 			to_mem_data <= input_vector_B[31:0];
-//			output_vector <= mem_data;
 		end
 	endcase
 end

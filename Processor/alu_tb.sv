@@ -20,10 +20,12 @@ operandA = 32; operandB = 64; opcode = 3'b001;	#10;
 operandA = 32'hFFFFFFFF; operandB = 10; opcode = 3'b000; #10;
 // Carry flag
 operandA = 32'hFFFFFFFF; operandB = 1; opcode = 3'b000; #10;	
-// Multiply flag
+// Multiply
 operandA = 32'd100; operandB = 32'd2; opcode = 3'b010; #10;	
-// Integer division flag
+// Integer division
 operandA = 32'd50; operandB = 32'd3; opcode = 3'b101; #10;
+// Module Error
+operandA = 32'd0; operandB = 32'd0; opcode = 3'b011; #10;
 end
 
 endmodule

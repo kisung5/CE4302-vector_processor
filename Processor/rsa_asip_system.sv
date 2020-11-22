@@ -66,8 +66,8 @@ always_comb
 	endcase
 
 // MUX for address input to data memory controlled by I/O logic
- multiplexer #(.N(19)) mux1 
- (.d1(m_address_cpu[18:0]), .d2(m_address_gpio), .d3(19'b0),
+ multiplexer #(.N(18)) mux1 
+ (.d1(m_address_cpu[17:0]), .d2(m_address_gpio), .d3(18'b0),
 .selector({1'b0,mux_select}),
 .out(m_address));
 

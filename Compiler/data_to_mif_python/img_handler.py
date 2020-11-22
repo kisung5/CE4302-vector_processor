@@ -13,7 +13,7 @@ def txt_to_mif():
     # data_stream = data_stream.split()
     bitmap = np.array(lines)
     bitmap = bitmap.astype(np.uint8)
-    string_array = ["DEPTH = " + str(len(bitmap) + int(len(bitmap)/16)*4) + ";\n",
+    string_array = ["DEPTH = " + str(len(bitmap) + int(len(bitmap)/16)*9) + ";\n",
                     "WIDTH = " + str(8) + ";\n",
                     "ADDRESS_RADIX = DEC;\n",
                     "DATA_RADIX = DEC;\n",
@@ -26,7 +26,7 @@ def txt_to_mif():
         temp_string += ";\n"
         string_array.append(temp_string)
         counter += 1
-    for j in range(int(len(bitmap)/16)*4):
+    for j in range(int(len(bitmap)/16)*9):
         temp_string = str(counter) + " : "
         temp_string += str(0)
         temp_string += ";\n"

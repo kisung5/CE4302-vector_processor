@@ -27,6 +27,8 @@ initial begin
 	#5 addr = 18'h2afff;
 	#50;
 	#5 addr = 18'h2b000;
+	#50;
+	#5 addr = 18'h3D08F;
 end
 
 endmodule 

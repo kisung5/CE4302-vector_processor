@@ -77,7 +77,7 @@ multiplexer pc_load_select (.d1(pc_adder_mux), .d2(imm_ext_e), .d3(32'b0),
 
 
 /************Fetch/Decode instruction pipelined register**************/
-fdpipe fetch_decode (.stall_D(stall_fetch), .flush_F(rst || flush_decode), .clk(clk), 
+fdpipe fetch_decode (.stall_D(stall_fetch || stall_mem), .flush_F(rst || flush_decode), .clk(clk), 
 .inst_F(inst), .inst_D(inst_fetched));
 
 

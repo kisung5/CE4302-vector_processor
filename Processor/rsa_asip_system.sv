@@ -6,7 +6,7 @@ module rsa_asip_system
 selected, // Selected algorithm
 start, // Start conversion
 input logic [3:0] sector_select,
-// output logic h_sync, v_sync, clk_25mhz, sync_n, blank_n, 
+output logic reg15,
 output logic [7:0] gpio
 );
 
@@ -126,7 +126,7 @@ outputGPIO gpio_control (
 	.address(m_address_gpio)
 );
 
-// assign reg15 = reg_15[0];
+ assign reg15 = reg_15[0];
 // assign R = rgb;
 // assign G = rgb;
 // assign B = rgb;

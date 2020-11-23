@@ -12,7 +12,6 @@ init:
     lb r1 r1 0
     beq r1 zero nearestNeighborInit
 
-
 bilinearInit:
     rep v1 zero
     rep v2 zero
@@ -34,7 +33,6 @@ bilinearInit:
     addi r5 zero 9801
     addi r6 zero 0
     addi r8 zero 100
-
 
 bilinearLoop:
     beq r6 r5 end
@@ -151,7 +149,6 @@ bilinearLoop:
     beq t1 zero bilinearUpdateOffset
     beq zero zero bilinearLoop
 
-
 bilinearUpdateOffset:
     add t1 r4 r4
     addi t1 t1 1
@@ -161,7 +158,6 @@ bilinearUpdateOffset:
     add r7 t1 r7
     addi r7 r7 1
     beq zero zero bilinearLoop
-
 
 nearestNeighborInit:
     addi r3 zero 300
@@ -181,7 +177,6 @@ nearestNeighborInit:
     addi t1 zero 2
     rep v3 t1
 
-
 nearestNeighborLoop:
     beq r5 r6 end
     lb t1 r7 0
@@ -194,13 +189,11 @@ nearestNeighborLoop:
     beq t1 zero nearestNeighborUpdateOffset
     beq zero zero nearestNeighborLoop
 
-
 nearestNeighborUpdateOffset:
     rep v2 r4
     addv v1 v1 v2
     add r7 r7 r3
     beq zero zero nearestNeighborLoop
-
-
+    
 end:
     addi r9 zero 1

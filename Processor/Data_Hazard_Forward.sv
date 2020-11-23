@@ -29,8 +29,8 @@ output logic [1:0] S_Hazard_A, S_Hazard_B);
 		5'b11011: resultA <= 2'b11;
 		5'b11100: resultA <= 2'b01;
 		5'b11101: resultA <= 2'b10;
-		5'b11110: resultA <= 2'b11;
-		5'b11111: resultA <= 2'b11;
+		5'b11110: resultA <= 2'b01;
+		5'b11111: resultA <= 2'b10;
 		default: resultA <= 2'b00;
 	endcase
 	end
@@ -53,8 +53,8 @@ output logic [1:0] S_Hazard_A, S_Hazard_B);
 		5'b11011: resultB <= 2'b11;
 		5'b11100: resultB <= 2'b01;
 		5'b11101: resultB <= 2'b10;
-		5'b11110: resultB <= 2'b11;
-		5'b11111: resultB <= 2'b11;
+		5'b11110: resultB <= 2'b01;
+		5'b11111: resultB <= 2'b10;
 		default: resultB <= 2'b00;
 	endcase
 	end

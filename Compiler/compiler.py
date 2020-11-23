@@ -144,7 +144,7 @@ for line in file:
     lineArray = line.split()
     if(len(lineArray) != 0):
         if(lineArray[0][-1] == ':'):
-            newLabel = {lineArray[0][0:-1]: str(pc + 4)}
+            newLabel = {lineArray[0][0:-1]: str(pc)}
             labels.update(newLabel)
         else:
             pc += 4

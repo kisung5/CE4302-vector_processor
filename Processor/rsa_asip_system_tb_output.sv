@@ -18,7 +18,7 @@ rsa_asip_system DUT
 (.clk(clk), .rst(rst), .selected(selected), .start(start),
 .sector_select(sector_select), .reg15(reg15), .gpio(gpio));
 
-int file, i;
+int file1, file2, i;
 
 always #1 clk = ~clk;
 //always #8400000 selected = ~selected;
@@ -30,55 +30,52 @@ initial begin
 	start = 0;
 	sector_select = 4'b0;
 	@(posedge clk);
+	selected = 0;
+	sector_select = 4'b0101;
 	@(posedge clk);
 	rst=0;
 end
 
 initial begin
-	file = $fopen("image_output.img","w");
+	file1 = $fopen("image_input.img","w");
+	file2 = $fopen("image_output.img","w");
 
 	@(negedge rst); //Wait for reset to be released
 	
-	selected = 0;
-	sector_select = 4'b0010;
+	for (i = 0; i<160000; i=i+1)
+	begin
+		@(posedge clk);
+		$fwrite(file1, "%b\n", gpio);
+	end
+	
+	$fclose(file1);
 	
 	@(posedge clk);   //Wait for fisrt clock out of reset
-	@(posedge clk);
-	
 	start = 1;
-	
 	@(posedge clk);
-	
-	start = 0;
-
-//	for (i = 0; i<420050; i=i+1)
-//	begin
-//		@(posedge clk_25mhz);
-//		$fwrite(file, "%b %b %b\n", h_sync, v_sync, rgb);
-//	end
 	
 //	@(posedge clk);
 	
 //	@(posedge clk);
 	@(posedge reg15);
-//	@(posedge clk);
+	@(posedge clk);
 	
 	if (!selected) begin
 		for (i = 0; i<40000; i=i+1)
 		begin
 			@(posedge clk);
-			$fwrite(file, "%b\n", gpio);
+			$fwrite(file2, "%b\n", gpio);
 		end
 	end
 	else begin
 		for (i = 0; i<88804; i=i+1)
 		begin	
 			@(posedge clk);
-			$fwrite(file, "%b\n", gpio);
+			$fwrite(file2, "%b\n", gpio);
 		end
 	end
 	
-	$fclose(file);  
+	$fclose(file2);  
 
 	$finish;
 end

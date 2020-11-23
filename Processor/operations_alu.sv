@@ -34,40 +34,35 @@ begin
 			end
 		3'b011 : 
 			begin // Operation mod
-				result <= operandA % operandB;
-//				result <= module_result;
-				carryout <= 1'b0;
+				if (operandB == 32'b0) begin
+					result <= 32'b0;
+					carryout <= 1'b0;
+				end else begin
+					result <= operandA % operandB;
+					carryout <= 1'b0;
+				end
 			end
 
 		// Logic operations
 		3'b100 : 
 			begin // Operation and
-//				result <= and_result;
 				result <= operandA & operandB;
 				carryout <= 1'b0;
 			end
 		3'b101 : 
-// 			begin // Operation concatenate
-// //				result <= concatenate_result;
-// 				result <= {16'b0, operandA[7:0], operandB[7:0]};
-// 				carryout <= 1'b0;
-// 			end
 			begin // Operation integer division
-// //				result <= concatenate_result;
 				result <= operandA / operandB;
 				carryout <= 1'b0;
 			end
 		
 		3'b110 : 
 			begin // Operation srl
-//				result <= shiftright_result;
 				result <= operandA >> operandB;
 				carryout <= 1'b0;
 			end
 
 		3'b111 : 
 			begin // Operation sll
-//				result <= shiftleft_result;
 				result <= operandA << operandB;
 				carryout <= 1'b0;
 			end

@@ -12,7 +12,7 @@ output logic [7:0] gpio
 
 logic m_write_e, m_wren_cpu,
 rst_sys, gpio_select, mux_select;
-logic [7:0] m_rdata, m_rdata1, m_rdata_cpu, m_rdata_gpio;
+logic [7:0] m_rdata, m_rdata1, m_rdata_cpu/*, m_rdata_gpio*/;
 logic [31:0] inst, pc_f, reg_15,
 m_write_data, m_address_cpu; 
 logic [17:0] m_address_gpio, m_address;
@@ -39,14 +39,14 @@ always_comb
 		else begin
 			next <= 2'b00;
 			mux_select <= 1'b1;
-			gpio_select <= 1'b0;
+			gpio_select <= 1'b1;
 			rst_sys <= 1'b1;
 		end
 	2'b01: 
 		if(reg_15[0]) begin 
 			next <= 2'b10;
 			mux_select <= 1'b1;
-			gpio_select <= 1'b1;
+			gpio_select <= 1'b0;
 			rst_sys <= 1'b1;
 		end 
 		else begin
@@ -56,12 +56,18 @@ always_comb
 			rst_sys <= 1'b0;
 		end
 	2'b10:
-		begin
+		if (start) begin
 			next <= 2'b10;
 			mux_select <= 1'b1;
 			gpio_select <= 1'b1;
 			rst_sys <= 1'b1;
-		end 
+		end
+		else begin
+			next <= 2'b00;
+			mux_select <= 1'b1;
+			gpio_select <= 1'b1;
+			rst_sys <= 1'b1;
+		end
 	default: next <= 2'b00;
 	endcase
 
@@ -81,7 +87,7 @@ always_comb
 demultiplexer #(.N(8)) demux
 (.in(m_rdata1),
 .selector(mux_select),
-.out1(m_rdata_cpu), .out2(m_rdata_gpio));
+.out1(m_rdata_cpu), .out2(gpio));
 
 // Processor is a ASIP for the RSA algorithm
 processor cpu
@@ -120,9 +126,9 @@ Instr_mem rom
 // );
 
 outputGPIO gpio_control ( 
-	.clk(clk), .rst(rst), .enable(gpio_select), .selected(selected),
-	.current_pixel(m_rdata_gpio),
-	.outputPin(gpio),
+	.clk(~clk), .rst(rst||~rst_sys), .enable(gpio_select), .selected(selected),
+	/*.current_pixel(m_rdata_gpio), */.io_select(start),
+	/*.outputPin(gpio),*/
 	.address(m_address_gpio)
 );
 

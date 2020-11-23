@@ -165,7 +165,6 @@ nearestNeighborInit:
     addi r5 zero 10000
     addi r6 zero 0
     addi r8 zero 100
-    addi r9 zero 0
     addi t1 zero 160000
     movv v1 t1 0
     addi t1 zero 160001

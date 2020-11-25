@@ -30,8 +30,8 @@ initial begin
 	start = 0;
 	sector_select = 4'b0;
 	@(posedge clk);
-	selected = 0;
-	sector_select = 4'b0101;
+	selected = 1;
+	sector_select = 4'b1000;
 	@(posedge clk);
 	rst=0;
 end
